@@ -20,15 +20,35 @@ module.exports = {
         },
       },
     },
+    {
+      use: '@gridsome/source-strapi',
+      options: {
+        // 接口地址
+        apiURL: 'http://localhost:1337',
+        // 最多能够查询多少条数据
+        queryLimit: 1000, // Defaults to 100
+        // 最关键：指定获取哪些内容
+        contentTypes: ['post'],
+        typeName: 'Strapi',
+        singleTypes: ['landing'],
+        // Possibility to login with a Strapi user,
+        // when content types are not publicly available (optional).
+        // loginData: {
+        //   identifier: '',
+        //   password: ''
+        // }
+      }
+    }
   ],
-  // 定义用于集合的路有模板
+  // 定义用于集合的路由模板
   templates: {
-    // Post: [
-    //   {
-    //     path: '/posts/:id',
-    //     component: './src/templates/Post.vue',
-    //   },
-    // ],
+    // 由 @gridsome/source-strapi 自动配置的「键」名：由上面的 typeName+contentType 组成，不能乱写
+    StrapiPost: [
+      {
+        path: '/post/:id',
+        component: './src/templates/Post.vue',
+      },
+    ],
   },
   // ransformers: {
   //   remark: {

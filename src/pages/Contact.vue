@@ -26,14 +26,18 @@
             Want to get in touch? Fill out the form below to send me a message
             and I will get back to you as soon as possible!
           </p>
+          <p class="help-block text-danger" v-for="m in messages" :key="m">
+            {{ m }}
+          </p>
           <!-- Contact Form - Enter your email address on line 19 of the mail/contact_me.php file to make this form work. -->
           <!-- WARNING: Some web hosts do not allow emails to be sent through forms to common mail hosts like Gmail or Yahoo. It's recommended that you use a private domain email address! -->
           <!-- To use the contact form, your site must be on a live web host with PHP! The form will not work locally! -->
-          <form name="sentMessage" id="contactForm" novalidate>
+          <form name="sentMessage" id="contactForm">
             <div class="control-group">
               <div class="form-group floating-label-form-group controls">
                 <label>Name</label>
                 <input
+                  v-model="form.name"
                   type="text"
                   class="form-control"
                   placeholder="Name"
@@ -48,6 +52,7 @@
               <div class="form-group floating-label-form-group controls">
                 <label>Email Address</label>
                 <input
+                  v-model="form.email"
                   type="email"
                   class="form-control"
                   placeholder="Email Address"
@@ -64,6 +69,7 @@
               >
                 <label>Phone Number</label>
                 <input
+                  v-model="form.phone"
                   type="tel"
                   class="form-control"
                   placeholder="Phone Number"
@@ -78,6 +84,7 @@
               <div class="form-group floating-label-form-group controls">
                 <label>Message</label>
                 <textarea
+                  v-model="form.message"
                   rows="5"
                   class="form-control"
                   placeholder="Message"
@@ -94,6 +101,7 @@
               type="submit"
               class="btn btn-primary"
               id="sendMessageButton"
+              @click.prevent="onSubmit"
             >
               Send
             </button>
@@ -107,8 +115,39 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "ContactPage",
+  data() {
+    return {
+      form: {
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
+      },
+      messages: [],
+    };
+  },
+  methods: {
+    async onSubmit() {
+      if (this.form.name !== "" && this.form.message !== "") {
+        try {
+          await axios({
+            method: "POST",
+            url: "http://localhost:1337/contacts",
+            data: this.form,
+          });
+          window.alert("发送成功");
+        } catch (err) {
+          window.alert("发送失败");
+        }
+      } else {
+        this.messages.push("请填写必要信息");
+      }
+    },
+  },
 };
 </script>
 

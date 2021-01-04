@@ -7,8 +7,8 @@
         <div class="row">
           <div class="col-lg-8 col-md-10 mx-auto">
             <div class="site-heading">
-              <h1>Clean Blog</h1>
-              <span class="subheading">A Blog Theme by Start Bootstrap</span>
+              <h1>{{ landing.title }}</h1>
+              <span class="subheading">{{ landing.subtitle }}</span>
             </div>
           </div>
         </div>
@@ -19,15 +19,19 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
-          <div class="post-preview" v-for="post in $page.posts.edges" :key="post.node.id">
-            <a :href="post.node.path">
+          <div
+            class="post-preview"
+            v-for="post in $page.posts.edges"
+            :key="post.node.id"
+          >
+            <g-link :to="post.node.path">
               <h2 class="post-title">
                 {{ post.node.title }}
               </h2>
               <h3 class="post-subtitle">
                 {{ post.node.title }}
               </h3>
-            </a>
+            </g-link>
             <p class="post-meta">
               Posted by
               <a href="#">Start Bootstrap</a>
@@ -35,12 +39,14 @@
             </p>
           </div>
           <hr />
+
           <!-- Pager -->
-          <div class="clearfix">
+          <!-- <div class="clearfix">
             <a class="btn btn-primary float-right" href="#"
               >Older Posts &rarr;</a
             >
-          </div>
+          </div> -->
+          <pager :info="$page.posts.pageInfo" />
         </div>
       </div>
     </div>
@@ -49,14 +55,27 @@
 </template>
 
 <page-query>
-query {
-  posts: allBlogPost{
+query ($page: Int) {
+  posts: allStrapiPost (perPage: 2, page: $page) @paginate {
+    pageInfo {
+      totalPages
+      currentPage
+    }
     edges{
       node{
-        id   
+        id
         path
         title
         content
+      }
+    }
+  }
+
+  landing: allStrapiLanding {
+    edges{
+      node{
+        title
+        subtitle
       }
     }
   }
@@ -65,10 +84,20 @@ query {
 </page-query>
 
 <script>
+import { Pager } from "gridsome";
+
 export default {
   name: "HomePage",
   metaInfo: {
     title: "Hello, world!",
+  },
+  components: {
+    Pager,
+  },
+  computed: {
+    landing() {
+      return this.$page.landing.edges[0].node;
+    },
   },
 };
 </script>
